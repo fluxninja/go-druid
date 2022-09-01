@@ -159,17 +159,23 @@ func (c *Client) NewRequest(method, path string, opt interface{}) (*retryablehtt
 }
 
 func (c *Client) Do(r *retryablehttp.Request, result interface{}) (*Response, error) {
+	fmt.Printf("BEFORE HTTP DO\n")
 	resp, err := c.http.Do(r)
+	fmt.Printf("AFTER HTTP DO %v\n", err)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 	response := &Response{resp}
+	fmt.Printf("BEFORE EXTRACT ERROR\n")
 	if err = response.ExtractError(); err != nil {
+		fmt.Printf("EXTRACT ERROR: %v\n", err)
 		return nil, err
 	}
 	if result != nil {
+		fmt.Printf("BEFORE NEW DECODER\n")
 		if err = json.NewDecoder(resp.Body).Decode(result); err != nil {
+			fmt.Printf("NEW DECODER %v\n", err)
 			return nil, err
 		}
 	}
