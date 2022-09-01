@@ -1,6 +1,7 @@
 package druid
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/grafadruid/go-druid/builder"
@@ -24,7 +25,9 @@ func (q *QueryService) Execute(qry builder.Query, result interface{}, headers ht
 	default:
 		path = NativeQueryEndpoint
 	}
+	fmt.Printf("BEFORE NEW REQUEST\n")
 	r, err := q.client.NewRequest("POST", path, qry)
+	fmt.Printf("AFTER NEW REQUEST %v\n", err)
 	if err != nil {
 		return nil, err
 	}
@@ -33,7 +36,9 @@ func (q *QueryService) Execute(qry builder.Query, result interface{}, headers ht
 			r.Header.Set(k, vv)
 		}
 	}
+	fmt.Printf("BEFORE CLIENT DO\n")
 	resp, err := q.client.Do(r, result)
+	fmt.Printf("AFTER CLIENT DO %v\n", err)
 	if err != nil {
 		return nil, err
 	}
